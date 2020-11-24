@@ -49,7 +49,7 @@ class CheckoutView(View):
 				return redirect('checkout')
 			return redirect('checkout')
 		except ObjectDoesNotExist:
-			messages.error(self.request, "You do not have an active order")
+			messages.error(self.request, "You do not have active orders")
 			return redirect('checkout')
 
 class HomeView(ListView):
