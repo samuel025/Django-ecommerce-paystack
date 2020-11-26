@@ -19,7 +19,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
-    'core'
+    'core',
+    'paystack.frameworks.django',
 ]
 
 MIDDLEWARE = [
@@ -29,7 +30,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'foodstore.urls'
@@ -40,6 +42,9 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
+            'libraries': {
+                'paystack': 'paystack.frameworks.django.templatetags.paystack',
+            },
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -78,6 +83,10 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+PAYSTACK_PUBLIC_KEY = 'sk_test_4efc8832170a975a1e1eb669a89b512909d0049a' # paystack public key
+PAYSTACK_SCRET_KEY = 'pk_test_3f7e5637d0d1c970683fa7b4423675a92c4119a4' #paystack secret key
 
 
 if ENVIRONMENT == 'production':
