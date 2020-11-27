@@ -2,16 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from core.views import ItemDetailView, CheckoutView, HomeView, add_to_cart, remove_from_cart, OrderSummaryView, remove_single_item_from_cart
+from core.views import ItemDetailView, CheckoutView, HomeView, add_to_cart, remove_from_cart, OrderSummaryView, remove_single_item_from_cart, verify, final_checkout
 from dispatch import receiver
-from paystack.api import signals
-
-@receiver(signals.successful_payment_signal)
-def on_successful_payment(sender, **kwargs):
-    import pdb
-
-    pdb.set_trace()
-    pass
     
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,7 +15,9 @@ urlpatterns = [
     path('order-summary', OrderSummaryView.as_view(), name='order_summary'),
     path('remove-single-item-from-cart/<slug>', remove_single_item_from_cart, name='remove_single_item_from_cart'),
     path('accounts/', include('allauth.urls')),
-    path("paystack/", include(("paystack.frameworks.django.urls", "paystack"), namespace="paystack"))
+    path('verify/<int:id>', verify, name='verify_payment'),
+    path('final-checkout/', final_checkout, name='f_checkout')
+    
 ]
 
 if settings.DEBUG:

@@ -8,6 +8,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import CheckoutForm
+from pypaystack import Transaction
+from django.http import JsonResponse
 # Create your views here.
 
 
@@ -147,3 +149,16 @@ def remove_single_item_from_cart(request,slug):
 	else:
 		messages.info(request, "You do not have an active order")
 		return redirect('product_page', slug=slug)
+
+
+
+def final_checkout(request):
+	return render(request, 'final_checkout.html', {})
+
+
+
+def verify(request, id):
+	transaction = Transaction(authorization_key = 'sk_test_4efc8832170a975a1e1eb669a89b512909d0049a')
+	response = transaction.verify(id)
+	data = JsonResponse(response, safe=False)
+	return data

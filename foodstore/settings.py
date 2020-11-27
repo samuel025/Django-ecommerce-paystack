@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'crispy_forms',
     'core',
-    'paystack.frameworks.django',
+    
 ]
 
 MIDDLEWARE = [
@@ -42,9 +42,6 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
-            'libraries': {
-                'paystack': 'paystack.frameworks.django.templatetags.paystack',
-            },
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',

@@ -20,70 +20,16 @@
           <div class="card">
 
             <!--Card content-->
-            <form method="POST" class="card-body">
-              {% csrf_token %}
-
-              <!--address-->
-              <div class="md-form mb-5">
-                <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
-                {{form.street_address}}
-                <label for="address" class="">Address</label>
-              </div>
-
-              <!--address-2-->
-              <div class="md-form mb-5">
-                <!-- <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite"> -->
-                {{form.apartment_address}}
-                <label for="address-2" class="">Address 2 (optional)</label>
-              </div>
-
-              <!--Grid row-->
-              <div class="row">
-
-                <!--Grid column-->
             
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-6 mb-4">
-
-                  <label for="zip">Phone Number</label>
-                  <!-- <input type="text" class="form-control" id="zip" placeholder="Phone Number" required> -->
-                  {{form.phone_number}}
-                </div>
-                <!--Grid column-->
-
-              </div>
-              <!--Grid row-->
-
-              <hr>
-
-              <div class="custom-control custom-checkbox">
-                <input {% if form.same_shipping_address.value %}checked{% endif %} type="checkbox" class="custom-control-input" name="same_billing_address" id="same-address">
-
-                <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
-              </div>
-              <div class="custom-control custom-checkbox">
-                <input {% if form.save_info.value %}checked{% endif %} type="checkbox" class="custom-control-input" name="save-info" id="save-info">
-                
-                <label class="custom-control-label" for="save-info">Save this information for next time</label>
-              </div>
-
-              <hr>
-
-              <div class="d-block my-3">
-                <div class="custom-control custom-radio">
-                  
-                </div>
-                
-                <!-- <div class="custom-control custom-radio">
-                  <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required>
-                  <label class="custom-control-label" for="paypal">Paypal</label>
-                </div> -->
-              </div>
               
               <hr class="mb-4">
-              <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+              <form>
+                <script src="https://js.paystack.co/v1/inline.js"></script>
+                <button class="btn btn-primary btn-lg btn-block" type="button" onclick="payWithPaystack()"> Pay </button> 
+              </form>
+              
 
-            </form>
+            
 
           </div>
           <!--/.Card-->
@@ -156,6 +102,42 @@
 
     </div>
   </main>
+    
+    
+<script>
+  function payWithPaystack(){
+    var handler = PaystackPop.setup({
+      key: 'pk_test_3f7e5637d0d1c970683fa7b4423675a92c4119a4',
+      email: '{{user.email}}',
+      amount: 10000,
+      ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+      metadata: {
+         custom_fields: [
+            {
+                display_name: "Samuel Dave",
+                variable_name: "mobile_number",
+                value: "+2348012345678"
+            }
+         ]
+      },
+      callback: function(response){
+          datar = response.reference
+          $.ajax({
+            url: '/verify/'+ datar,
+            method: 'GET',
+
+            success: function (response) {
+              window.location.href = "/verify/" + datar
+            }
+          });
+      },
+      onClose: function(){
+          alert('window closed');
+      }
+    });
+    handler.openIframe();
+  }
+</script>
   
   <!--Main layout-->
 
