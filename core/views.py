@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import ListView, DetailView, View
-from .models import Item, OrderItem, Order, BillingAddress
+from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.contrib import messages
@@ -21,11 +21,19 @@ def products(request):
 
 
 class CheckoutView(View):
-	def get(self, *args, **kwargs):
-		form = CheckoutForm()
-		context={
-			'form': form
-		}
+	def get(self, *args, **kwargs):	
+		try:
+			order = Order.objects.get(user=self.request.user, ordered=False)
+			form = CheckoutForm()
+			context={
+			'form': form,
+			'order': order
+			}
+
+		except ObjectDoesNotExist:
+			messages.info(self.request, "You do not have an active order")
+			return redirect("checkout")
+		
 		return render(self.request, "checkout-page.html", context)
 
 	def post(self, *args, **kwargs):
@@ -48,7 +56,7 @@ class CheckoutView(View):
 				billing_address.save()
 				order.billing_address = billing_address
 				order.save()
-				return redirect('checkout')
+				return redirect('f_checkout')
 			return redirect('checkout')
 		except ObjectDoesNotExist:
 			messages.error(self.request, "You do not have active orders")
@@ -153,12 +161,63 @@ def remove_single_item_from_cart(request,slug):
 
 
 def final_checkout(request):
-	return render(request, 'final_checkout.html', {})
+	order = Order.objects.get(user=request.user, ordered=False)
+	return render(request, 'final_checkout.html', {'order':order})
 
 
 
-def verify(request, id):
-	transaction = Transaction(authorization_key = 'sk_test_4efc8832170a975a1e1eb669a89b512909d0049a')
-	response = transaction.verify(id)
-	data = JsonResponse(response, safe=False)
-	return data
+class PaymentView(View):
+	def get(self, *args, **kwargs):
+		transaction = Transaction(authorization_key = 'sk_test_4efc8832170a975a1e1eb669a89b512909d0049a')
+		response = transaction.verify(kwargs['id'])
+		data = JsonResponse(response, safe=False)
+
+		if response[3]:
+			try:
+				order = Order.objects.get(user=self.request.user, ordered=False)
+				payment = Payment()
+				payment.paystack_id = kwargs['id']
+				payment.user = self.request.user
+				payment.amount = order.get_total()
+				payment.save()
+
+				order_items = order.items.all()
+				order_items.update(ordered=True)
+				for item in order_items:
+					item.save()
+
+				order.ordered = True
+				order.payment = payment
+				order.save()
+
+				messages.success(self.request, "order was successful")
+				return redirect("/")
+			except ObjectDoesNotExist:
+				messages.success(self.request, "Your order was successful")
+				return redirect("/")
+		else:
+			messages.danger(self.request, "Could not verify the transaction")
+			return redirect("/")
+
+def get_coupon(request, code):
+	try:
+		coupon = Coupon.objects.get(code=code)
+		return coupon
+	except ObjectDoesNotExist:
+		messages.info(self.request, "This coupon does not exist")
+		return redirect("checkout")
+
+
+def add_coupon(request):
+	try:
+		order_qs = Order.objects.get(user=request.user, ordered=False)
+		order.coupon = get_coupon(request, code)
+		order.save()
+		messages.success(self.request, "successfuly added coupon")
+		return redirect("checkout")
+
+	except ObjectDoesNotExist:
+		messages.info(self.request, "You do not have an active order")
+		return redirect("checkout")
+
+	
