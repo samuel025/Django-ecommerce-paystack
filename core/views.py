@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import CheckoutForm
+from .forms import CheckoutForm, CouponForm
 from pypaystack import Transaction
 from django.http import JsonResponse
 # Create your views here.
@@ -27,7 +27,9 @@ class CheckoutView(View):
 			form = CheckoutForm()
 			context={
 			'form': form,
-			'order': order
+			'order': order,
+			'couponform' : CouponForm(),
+			'DISPLAY_COUPON': True
 			}
 
 		except ObjectDoesNotExist:
@@ -162,7 +164,16 @@ def remove_single_item_from_cart(request,slug):
 
 def final_checkout(request):
 	order = Order.objects.get(user=request.user, ordered=False)
-	return render(request, 'final_checkout.html', {'order':order})
+	if order.billing_address:
+		context = {
+					'order':order,
+					'DISPLAY_COUPON': False
+
+					}
+		return render(request, 'final_checkout.html', context)
+	else:
+		messages.warning(request, "You have not submitted any address")
+		return redirect('checkout')
 
 
 
@@ -208,16 +219,22 @@ def get_coupon(request, code):
 		return redirect("checkout")
 
 
-def add_coupon(request):
-	try:
-		order_qs = Order.objects.get(user=request.user, ordered=False)
-		order.coupon = get_coupon(request, code)
-		order.save()
-		messages.success(self.request, "successfuly added coupon")
-		return redirect("checkout")
+class add_coupon(View):
+	def post(self, *args, **kwargs):
+		if request.method == "POST":
+			form = CouponForm(self.request.POST or None)
+			if form.is_valid():
+				try:
+					code = form.cleaned_data.get('code')
+					order = Order.objects.get(user=self.request.user, ordered=False)
+					order.coupon = get_coupon(self.request, code)
+					order.save()
+					messages.success(self.request, "successfuly added coupon")
+					return redirect("checkout")
 
-	except ObjectDoesNotExist:
-		messages.info(self.request, "You do not have an active order")
-		return redirect("checkout")
+				except ObjectDoesNotExist:
+					messages.info(self.request, "You do not have an active order")
+					return redirect("checkout")
+		
 
 	

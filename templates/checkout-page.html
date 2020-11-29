@@ -114,23 +114,26 @@
             <li class="list-group-item d-flex justify-content-between bg-light">
               <div class="text-success">
                 <h6 class="my-0">Promo code</h6>
-                <small>EXAMPLECODE</small>
+                <small>{{order.coupon.code}}</small>
               </div>
-              <span class="text-success">-$5</span>
+              <span class="text-success">-${{order.coupon.amount}}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between">
               <span>Total (USD)</span>
               <strong>${{order.get_total}}</strong>
             </li>
           </ul>
-          <form class="card p-2">
+          {% if DISPLAY_COUPON %}
+          <form class="card p-2" action="{% url 'add-coupon' %}" method="POST">
+            {% csrf_token %}
             <div class="input-group">
-              <input type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username" aria-describedby="basic-addon2">
+              {{ couponform.code }}
               <div class="input-group-append">
-                <button class="btn btn-secondary btn-md waves-effect m-0" type="button">Redeem</button>
+                <button class="btn btn-secondary btn-md waves-effect m-0" type="submit">Redeem</button>
               </div>
             </div>
           </form>
+          {% endif %}
           <!-- Cart -->
 
           <!-- Promo code -->

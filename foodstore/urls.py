@@ -17,7 +17,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('verify/<int:id>', PaymentView.as_view(), name='verify_payment'),
     path('final-checkout/', final_checkout, name='f_checkout'),
-    path('add-coupon/', add_coupon, name='add-coupon')
+    path('add-coupon/', add_coupon.as_view(), name='add-coupon')
     
 ]
 
