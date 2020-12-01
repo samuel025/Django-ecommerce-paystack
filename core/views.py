@@ -1,3 +1,5 @@
+import random
+import string
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import ListView, DetailView, View
@@ -12,6 +14,8 @@ from pypaystack import Transaction
 from django.http import JsonResponse
 # Create your views here.
 
+def create_ref_code():
+	return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
 
 def products(request):
 	context = {
@@ -199,6 +203,7 @@ class PaymentView(View):
 
 				order.ordered = True
 				order.payment = payment
+				order.ref_code = create_ref_code()
 				order.save()
 
 				messages.success(self.request, "order was successful")
@@ -215,13 +220,13 @@ def get_coupon(request, code):
 		coupon = Coupon.objects.get(code=code)
 		return coupon
 	except ObjectDoesNotExist:
-		messages.info(self.request, "This coupon does not exist")
+		messages.info(request, "This coupon does not exist")
 		return redirect("checkout")
 
 
 class add_coupon(View):
 	def post(self, *args, **kwargs):
-		if request.method == "POST":
+		if self.request.method == "POST":
 			form = CouponForm(self.request.POST or None)
 			if form.is_valid():
 				try:

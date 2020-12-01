@@ -62,6 +62,7 @@ class OrderItem(models.Model):
 
 class Order(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	ref_code = models.CharField(max_length=20)
 	items = models.ManyToManyField(OrderItem)
 	start_date = models.DateTimeField(auto_now_add=True)
 	ordered_date = models.DateTimeField()
@@ -69,6 +70,9 @@ class Order(models.Model):
 	billing_address = models.ForeignKey('BillingAddress', on_delete=models.SET_NULL, null=True,blank=True)
 	payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, null=True,blank=True)
 	coupon = models.ForeignKey('Coupon', on_delete=models.SET_NULL, null=True,blank=True)
+	being_delivered = models.BooleanField(default=False)
+	recieved = models.BooleanField(default=False)
+	
 
 	def __str__(self):
 		return self.user.username

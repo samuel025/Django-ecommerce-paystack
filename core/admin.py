@@ -2,7 +2,22 @@ from django.contrib import admin
 from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon
 # Register your models here.
 class OrderAdmin(admin.ModelAdmin):
-	list_display = ['user', 'ordered']
+	list_display = ['user', 
+					'ordered',
+					'being_delivered',
+					'recieved',
+					'billing_address', 
+					'payment', 
+					'coupon'
+					]
+	list_display_links = ['user', 'billing_address', 'payment', 'coupon']
+	list_filter = ['ordered',
+					'being_delivered',
+					'recieved'
+					]
+	search_fields = ['user__username',
+					 'ref_code'
+				]
 
 
 
