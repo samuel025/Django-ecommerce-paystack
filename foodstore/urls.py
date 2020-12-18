@@ -2,8 +2,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from core.views import ItemDetailView, CheckoutView, HomeView, add_to_cart, remove_from_cart, OrderSummaryView, remove_single_item_from_cart, PaymentView, final_checkout, add_coupon
+from core.views import ItemDetailView, CheckoutView, HomeView, add_to_cart, search_products, remove_from_cart, OrderSummaryView, remove_single_item_from_cart, PaymentView, final_checkout
 from dispatch import receiver
+
     
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -17,7 +18,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('verify/<int:id>', PaymentView.as_view(), name='verify_payment'),
     path('final-checkout/', final_checkout, name='f_checkout'),
-    path('add-coupon/', add_coupon.as_view(), name='add-coupon')
+    
+
     
 ]
 

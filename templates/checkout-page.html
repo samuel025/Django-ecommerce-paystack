@@ -20,70 +20,49 @@
           <div class="card">
 
             <!--Card content-->
-            <form method="POST" class="card-body">
-              {% csrf_token %}
-
-              <!--address-->
-              <div class="md-form mb-5">
-                <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
-                {{form.street_address}}
-                <label for="address" class="">Address</label>
-              </div>
-
-              <!--address-2-->
-              <div class="md-form mb-5">
-                <!-- <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite"> -->
-                {{form.apartment_address}}
-                <label for="address-2" class="">Address 2 (optional)</label>
-              </div>
-
-              <!--Grid row-->
-              <div class="row">
-
-                <!--Grid column-->
             
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-6 mb-4">
-
-                  <label for="zip">Phone Number</label>
-                  <!-- <input type="text" class="form-control" id="zip" placeholder="Phone Number" required> -->
-                  {{form.phone_number}}
+              <form method="POST" class="card-body">
+                {% csrf_token %}
+                <div class="hideable_shipping_form">
+                  <div class="md-form mb-5">
+                    <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
+                    {{form.street_address}}
+                    <label for="address" class="">Address</label>
+                  </div>
+                  <div class="md-form mb-5">
+                    <!-- <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite"> -->
+                    {{form.apartment_address}}
+                    <label for="address-2" class="">Address 2 (optional)</label>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                      <label for="zip">Phone Number</label>
+                      <!-- <input type="text" class="form-control" id="zip" placeholder="Phone Number" required> -->
+                      {{form.phone_number}}
+                    </div>
+                  </div>
                 </div>
-                <!--Grid column-->
-
-              </div>
-              <!--Grid row-->
-
-              <hr>
-
-              <div class="custom-control custom-checkbox">
-                <input {% if form.same_shipping_address.value %}checked{% endif %} type="checkbox" class="custom-control-input" name="same_billing_address" id="same-address">
-
-                <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
-              </div>
-              <div class="custom-control custom-checkbox">
-                <input {% if form.save_info.value %}checked{% endif %} type="checkbox" class="custom-control-input" name="save-info" id="save-info">
-                
-                <label class="custom-control-label" for="save-info">Save this information for next time</label>
-              </div>
-
-              <hr>
-
-              <div class="d-block my-3">
-                <div class="custom-control custom-radio">
+                <hr>               
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" name="set_default_shipping" id="set_default_shipping">
                   
+                  <label class="custom-control-label" for="set_default_shipping">Save this information for next time</label>
                 </div>
-                
-                <!-- <div class="custom-control custom-radio">
-                  <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required>
-                  <label class="custom-control-label" for="paypal">Paypal</label>
-                </div> -->
-              </div>
-              
-              <hr class="mb-4">
-              <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-
-            </form>
+                {% if default_shipping_address %}
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" name="use_default_shipping" id="use_default_shipping">
+                  
+                  <label class="custom-control-label" for="use_default_shipping">Use default address: {{ default_shipping_address.street_address|truncatechars:16 }}</label>
+                </div>
+                {% endif %}
+                <hr>
+                <div class="d-block my-3">
+                  <div class="custom-control custom-radio">                    
+                  </div>                                  
+                </div>              
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+              </form>
 
           </div>
           <!--/.Card-->
@@ -111,32 +90,8 @@
               <span class="text-muted">${{ order_item.get_final_price }}</span>
             </li>   
             {% endfor %}
-            {% if order.coupon %}   
-            <li class="list-group-item d-flex justify-content-between bg-light">
-              <div class="text-success">
-                <h6 class="my-0">Promo code</h6>
-                <small>{{order.coupon.code}}</small>
-              </div>
-              <span class="text-success">-${{order.coupon.amount}}</span>
-            </li>
-            {% endif %}
-            <li class="list-group-item d-flex justify-content-between">
-              <span>Total (USD)</span>
-              <strong>${{order.get_total}}</strong>
-            </li>
-          </ul>
-          {% if DISPLAY_COUPON %}
-          <form class="card p-2" action="{% url 'add-coupon' %}" method="POST">
-            {% csrf_token %}
-            <div class="input-group">
-              {{ couponform.code }}
-              <div class="input-group-append">
-                <button class="btn btn-secondary btn-md waves-effect m-0" type="submit">Redeem</button>
-              </div>
-            </div>
-          </form>
-          {% endif %}
-          <!-- Cart -->
+            
+            
 
           <!-- Promo code -->
           
@@ -154,3 +109,20 @@
   <!--Main layout-->
 
 {% endblock content %}
+
+{% block extra %}
+
+<script>
+var hideable_shipping_form = $('.hideable_shipping_form');
+
+var use_default_shipping = document.querySelector("input[name=use_default_shipping]");
+
+use_default_shipping.addEventListener('change', function() {
+  if (this.checked) {
+    hideable_shipping_form.hide();
+  } else {
+    hideable_shipping_form.show();
+  }
+})
+</script>
+{% endblock extra %}
