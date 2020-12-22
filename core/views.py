@@ -13,16 +13,17 @@ from .forms import CheckoutForm
 from pypaystack import Transaction
 from django.http import JsonResponse
 import json
+from .filters import ItemFilter
 # Create your views here.
 
-def search_products(request):
-	if request.method == 'POST':
-		search_str = json.loads(request.body).get('searchText')
+# def search_products(request):
+# 	if request.method == 'POST':
+# 		search_str = json.loads(request.body).get('searchText')
 
-		results = Item.objects.filter(title__istartswith=search_str)|Item.objects.filter(category__istartswith=search_str)
+# 		results = Item.objects.filter(title__istartswith=search_str)|Item.objects.filter(category__istartswith=search_str)
 
-		data = results.values()
-		return JsonResponse(list(data), safe=False)
+# 		data = results.values()
+# 		return JsonResponse(list(data), safe=False)
 
 def create_ref_code():
 	return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
@@ -118,8 +119,13 @@ class CheckoutView(View):
 			return redirect('checkout')
 
 class HomeView(ListView):
-	model = Item
-	template_name = "home-page.html"
+	def get(self, *args, **kwargs):
+		Items = Item.objects.all()
+		myfilter = ItemFilter(self.request.GET, queryset = Items)
+		Items = myfilter.qs
+		context = {'Item':Items, 'myfilter':myfilter}
+		return render(self.request, "home-page.html", context)
+	
 
 class ItemDetailView(DetailView):
 	model = Item

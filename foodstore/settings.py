@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'crispy_forms',
     'core',
+    'django_filters',
     
 ]
 

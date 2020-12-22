@@ -42,17 +42,19 @@
                     </div>
                   </div>
                 </div>
-                <hr>               
-                <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" name="set_default_shipping" id="set_default_shipping">
-                  
-                  <label class="custom-control-label" for="set_default_shipping">Save this information for next time</label>
+                <hr> 
+                <div class="set_default">              
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="set_default_shipping" id="set_default_shipping">
+                    
+                    <label class="custom-control-label" for="set_default_shipping">Save this information for next time</label>
+                  </div>
                 </div>
                 {% if default_shipping_address %}
                 <div class="custom-control custom-checkbox">
                   <input type="checkbox" class="custom-control-input" name="use_default_shipping" id="use_default_shipping">
                   
-                  <label class="custom-control-label" for="use_default_shipping">Use default address: {{ default_shipping_address.street_address|truncatechars:16 }}</label>
+                  <label class="custom-control-label" for="use_default_shipping">Use default address: {{ default_shipping_address.street_address|truncatechars:20 }}</label>
                 </div>
                 {% endif %}
                 <hr>
@@ -111,15 +113,15 @@
 {% endblock content %}
 
 {% block extra %}
-
 <script>
 var hideable_shipping_form = $('.hideable_shipping_form');
-
+var default_shipping_toggle = $('.set_default');
 var use_default_shipping = document.querySelector("input[name=use_default_shipping]");
 
 use_default_shipping.addEventListener('change', function() {
   if (this.checked) {
     hideable_shipping_form.hide();
+    default_shipping_toggle.hide();
   } else {
     hideable_shipping_form.show();
   }
