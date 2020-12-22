@@ -37,3 +37,5 @@ admin.site.register(Order, OrderAdmin)
 admin.site.register(Address, AddressAdmin)
 admin.site.register(Payment)
 
+
+
