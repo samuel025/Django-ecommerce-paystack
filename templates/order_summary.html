@@ -32,10 +32,10 @@
                 <a href="{% url 'add-to-cart' order_item.item.slug %}"><i class="fas fa-plus ml-2"></i></td></a>
               <td>
                 {% if order_item.item.discount_price %}
-                  ${{order_item.get_total_discount_price}}
-                  <span class="badge badge-primary">saving ${{order_item.get_amount_saved}}</span>
+                  ₦{{order_item.get_total_discount_price}}
+                  <span class="badge badge-primary">saving ₦{{order_item.get_amount_saved}}</span>
                 {% else %}
-                  ${{order_item.get_total_item_price}}
+                  ₦{{order_item.get_total_item_price}}
                 {% endif %}
                 <a href="{% url 'remove-from-cart' order_item.item.slug %}">
                   <p class="float-right">Delete</p>
@@ -52,16 +52,10 @@
               </td>
             </tr>
             {% endfor %}
-            {% if object.coupon %}
-            <tr>
-              <td colspan="4"><b>Coupon</b></td>
-              <td ><b>-${{ object.coupon.amount }}</b></td>
-            </tr>
-            {% endif %}
             {% if object.get_total %}
             <tr>
               <td colspan="4"><b>Order Total</b></td>
-              <td ><b>${{ object.get_total }}</b></td>
+              <td ><b>₦{{ object.get_total }}</b></td>
             </tr>
             <tr>
               <td colspan="5">
@@ -74,6 +68,9 @@
           </tbody>
         </table>
     </div>
+  <!--Footer-->
+    {% include "footer.html" %}
+  <!--/.Footer-->
   </main>
   <!--Main layout-->
   {% endblock content %}

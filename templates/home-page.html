@@ -152,7 +152,7 @@
       <nav class="navbar navbar-expand-lg navbar-dark mdb-color lighten-3 mt-3 mb-5">
 
         <!-- Navbar brand -->
-        <span class="navbar-brand">Categories:</span>
+        
 
         <!-- Collapse button -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
@@ -164,23 +164,19 @@
         <div class="collapse navbar-collapse" id="basicExampleNav">
 
           <!-- Links -->
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">All
-                <span class="sr-only">(current)</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Shirts</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Sport wears</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Outwears</a>
-            </li>
-
-          </ul>
+          
+            
+              
+              <form class="form-inline">
+                      <div class="form-group">
+                        {{myfilter.form.title}}
+                        <!-- <input class="form-control mr-sm-2" type="text" id="searchField" placeholder="Search" aria-label="Search"> -->
+                         <button type="submit" class="btn btn-primary btn-sm" id="searchbar">search</button>          
+                      </div>
+              </form>
+        
+            
+          
           <!-- Links -->
 
           
@@ -189,19 +185,7 @@
 
       </nav>
       <!--/.Navbar-->
-      <div class="">
-     
-          <form class="form-inline">
-                <div class="form-group">
-                  {{myfilter.form.title}}
-                  <!-- <input class="form-control mr-sm-2" type="text" id="searchField" placeholder="Search" aria-label="Search"> -->
-                   <button type="submit" class="btn btn-primary btn-sm" id="searchbar">search</button>          
-                </div>
-          </form>
-         
-          <br>
-        
-      </div>
+      
       <!--Section: Products v.3-->
       <section class="text-center mb-4">
 
@@ -242,7 +226,7 @@
 
                   <h4 class="font-weight-bold blue-text">
                   
-                    <strong>$
+                    <strong>₦
                     {% if item.discount_price %}
                       {{ item.discount_price }}
                     {% else %}
@@ -316,6 +300,7 @@
         <!--Pagination-->
       </div>
     </div>
+    {% include "footer.html" %}
   </main>
   <!--Main layout-->
 
@@ -323,8 +308,8 @@
  -->
 
 <script>
-  $( function() {
-    $( "#searchbar" ).autocomplete({
+  ₦( function() {
+    ₦( "#searchbar" ).autocomplete({
       source: '{% url 'home_page' %}',
       minLength: 2
     });
